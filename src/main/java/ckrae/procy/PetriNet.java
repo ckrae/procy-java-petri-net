@@ -100,6 +100,23 @@ public class PetriNet {
 	}
 
 	/**
+	 * Returns true if petri net has enabled transitions with respect to the given
+	 * marking
+	 * 
+	 * @param marking
+	 * @return true if petri net can fire
+	 */
+	public boolean canFire(Marking marking) {
+		assert marking != null : "marking is null";
+
+		if (this.getEnabledTransitions(marking).isEmpty())
+			return false;
+
+		return true;
+
+	}
+
+	/**
 	 * Perform a step of the petri net execution
 	 * 
 	 * @param marking
@@ -119,6 +136,36 @@ public class PetriNet {
 
 		marking.fireTransition(transition);
 
+		return marking;
+	}
+
+	/**
+	 * Execute firing steps until petri net can't fire anymore or the default
+	 * maximum number of iterations has been reached
+	 * 
+	 * @param marking the initial marking
+	 * @return
+	 */
+	public Marking execute(Marking marking) {
+		return execute(marking, 1000);
+	}
+
+	/**
+	 * Execute firing steps until petri net can't fire anymore or the maximum number
+	 * of iterations has been reached
+	 * 
+	 * @param marking  the initial marking
+	 * @param maxSteps number of max iterations
+	 * @return the final marking
+	 */
+	public Marking execute(Marking marking, int maxSteps) {
+		assert marking != null : "marking is null";
+
+		int step = 0;
+		while (this.canFire(marking) && step < maxSteps) {
+			marking = this.fire(marking);
+			step++;
+		}
 		return marking;
 	}
 

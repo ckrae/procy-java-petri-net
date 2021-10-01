@@ -42,7 +42,7 @@ public class Marking {
 	}
 
 	/**
-	 * Fire a transition of a petri net. Modify this marking to the resulting
+	 * Fire a transition of a petri net. Modifies this marking to the resulting
 	 * marking.
 	 * 
 	 * @param transition that fires

@@ -34,6 +34,44 @@ public class PetriNetTest {
 	}
 
 	@Test
+	public void ExecutionTest() {
+
+		net.arc(p1, t1);
+		net.arc(t1, p2);
+		net.arc(p2, t2);
+		net.arc(t2, p3);
+
+		Marking marking = new Marking(p1);
+		assertTrue(net.canFire(marking));
+
+		Marking res = net.execute(marking);
+		assertNotNull(res);
+		assertFalse(res.contains(p1));
+		assertFalse(res.contains(p2));
+		assertTrue(res.contains(p3));
+
+		assertFalse(net.canFire(marking));
+
+	}
+
+	@Test
+	public void ExecutionLoopsTest() {
+
+		net.arc(p1, t1);
+		net.arc(t1, p2);
+		net.arc(p2, t2);
+		net.arc(t2, p1);
+
+		Marking marking = new Marking(p1);
+		assertTrue(net.canFire(marking));
+
+		Marking res = net.execute(marking);
+		assertNotNull(res);
+		assertTrue(net.canFire(marking));
+
+	}
+
+	@Test
 	public void simpleTransitionFire() {
 
 		net = new PetriNet();

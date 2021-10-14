@@ -3,16 +3,34 @@ package ckrae.procy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
+
 /**
  * Element of a {@link PetriNet}
  *
  */
 public class Transition {
 
-	private String name;
-	private List<Place> incomingPlaces;
-	private List<Place> outgoingPlaces;
+	/**
+	 * Name of this transition.
+	 */
+	private final String name;
 
+	/**
+	 * Incoming places
+	 */
+	private final List<Place> incomingPlaces;
+
+	/**
+	 * Outgoing places
+	 */
+	private final List<Place> outgoingPlaces;
+
+	/**
+	 * Create a new transition.
+	 * 
+	 * @param name
+	 */
 	public Transition(String name) {
 		this.name = name;
 		this.incomingPlaces = new ArrayList<>();
@@ -26,7 +44,7 @@ public class Transition {
 	 * @param place
 	 */
 	protected void addIncoming(Place place) {
-		assert place != null : "place is null";
+		Validate.notNull(place, "place is null");
 
 		this.incomingPlaces.add(place);
 	}
@@ -37,7 +55,7 @@ public class Transition {
 	 * @param place
 	 */
 	protected void addOutgoing(Place place) {
-		assert place != null : "place is null";
+		Validate.notNull(place, "place is null");
 
 		this.outgoingPlaces.add(place);
 	}
@@ -60,7 +78,7 @@ public class Transition {
 	 * @return true if this transition has incoming places
 	 */
 	public boolean hasIncoming() {
-		assert this.incomingPlaces != null : "incoming places not initialized";
+		Validate.notNull(incomingPlaces, "incoming places not initialized");
 
 		return !this.incomingPlaces.isEmpty();
 	}
@@ -72,14 +90,15 @@ public class Transition {
 	 * @return true if this transition can fire
 	 */
 	public boolean canFire(Marking marking) {
-		assert marking != null : "marking is null";
+		Validate.notNull(marking, "marking is null");
 
 		if (!this.hasIncoming())
 			return true;
 
-		for (Place place : this.incomingPlaces)
+		for (Place place : this.incomingPlaces) {
 			if (!marking.contains(place))
 				return false;
+		}
 
 		return true;
 

@@ -6,9 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class PetriNetTest {
+class PetriNetTest {
 
 	private PetriNet net;
 
@@ -34,7 +35,8 @@ public class PetriNetTest {
 	}
 
 	@Test
-	public void ExecutionTest() {
+	@DisplayName("execute a petri net")
+	void ExecutionTest() {
 
 		net.arc(p1, t1);
 		net.arc(t1, p2);
@@ -44,18 +46,19 @@ public class PetriNetTest {
 		Marking marking = new Marking(p1);
 		assertTrue(net.canFire(marking));
 
-		Marking res = net.execute(marking);
-		assertNotNull(res);
-		assertFalse(res.contains(p1));
-		assertFalse(res.contains(p2));
-		assertTrue(res.contains(p3));
+		Marking result = net.execute(marking);
+		assertNotNull(result);
+		assertFalse(result.contains(p1));
+		assertFalse(result.contains(p2));
+		assertTrue(result.contains(p3));
 
-		assertFalse(net.canFire(marking));
+		assertFalse(net.canFire(result));
 
 	}
 
 	@Test
-	public void ExecutionLoopsTest() {
+	@DisplayName("execute petri net with loops")
+	void ExecutionLoopsTest() {
 
 		net.arc(p1, t1);
 		net.arc(t1, p2);
@@ -63,16 +66,16 @@ public class PetriNetTest {
 		net.arc(t2, p1);
 
 		Marking marking = new Marking(p1);
-		assertTrue(net.canFire(marking));
-
 		Marking res = net.execute(marking);
+
 		assertNotNull(res);
 		assertTrue(net.canFire(marking));
 
 	}
 
 	@Test
-	public void simpleTransitionFire() {
+	@DisplayName("fire simple transition")
+	void simpleTransitionFire() {
 
 		net = new PetriNet();
 		p1 = net.place("p1");
@@ -86,14 +89,15 @@ public class PetriNetTest {
 		assertNotNull(net.getEnabledTransitions(marking));
 		assertEquals(net.getEnabledTransitions(marking).size(), 1);
 
-		net.fire(marking);
-		assertFalse(marking.contains(p1));
-		assertTrue(marking.contains(p2));
+		Marking result = net.fire(marking);
+		assertFalse(result.contains(p1));
+		assertTrue(result.contains(p2));
 
 	}
 
 	@Test
-	public void multipleIncomingFire() {
+	@DisplayName("fire transition with multiple incoming places")
+	void multipleIncomingFire() {
 
 		net = new PetriNet();
 		p1 = net.place();
@@ -113,15 +117,16 @@ public class PetriNetTest {
 		assertNotNull(net.getEnabledTransitions(marking));
 		assertEquals(net.getEnabledTransitions(marking).size(), 1);
 
-		net.fire(marking);
-		assertFalse(marking.contains(p1));
-		assertFalse(marking.contains(p2));
-		assertTrue(marking.contains(p3));
+		Marking result = net.fire(marking);
+		assertFalse(result.contains(p1));
+		assertFalse(result.contains(p2));
+		assertTrue(result.contains(p3));
 
 	}
 
 	@Test
-	public void multipleOutgoingFire() {
+	@DisplayName("fire transition with multiple outgoing places")
+	void multipleOutgoingFire() {
 
 		net = new PetriNet();
 		p1 = net.place();
@@ -141,10 +146,10 @@ public class PetriNetTest {
 		assertNotNull(net.getEnabledTransitions(marking));
 		assertEquals(net.getEnabledTransitions(marking).size(), 1);
 
-		net.fire(marking);
-		assertFalse(marking.contains(p1));
-		assertTrue(marking.contains(p2));
-		assertTrue(marking.contains(p3));
+		Marking result = net.fire(marking);
+		assertFalse(result.contains(p1));
+		assertTrue(result.contains(p2));
+		assertTrue(result.contains(p3));
 
 	}
 

@@ -1,8 +1,10 @@
 package ckrae.procy;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
+
+import org.apache.commons.lang3.Validate;
 
 /**
  * The Marking class contains all places of a petri net that have a token.
@@ -13,51 +15,66 @@ public class Marking {
 	/**
 	 * List of places that contain a token
 	 */
-	public List<Place> places;
+	private final List<Place> places;
 
+	/**
+	 * Create empty marking.
+	 */
 	public Marking() {
-		this.places = new ArrayList<Place>();
-	}
-
-	public Marking(Place... places) {
-		List<Place> list = new LinkedList<>();
-		for (Place place : places)
-			list.add(place);
-		this.places = list;
-	}
-
-	public Marking(List<Place> list) {
-		assert list != null;
-		this.places = list;
+		this.places = new ArrayList<>();
 	}
 
 	/**
+	 * Create marking with given places.
+	 * 
+	 * @param places
+	 */
+	public Marking(Place... places) {
+		this(Arrays.asList(places));
+	}
+
+	/**
+	 * Create marking with given places.
+	 * 
+	 * @param list
+	 */
+	public Marking(List<Place> places) {
+		Validate.notNull(places);
+
+		this.places = places;
+	}
+
+	/**
+	 * Return true if this marking contains the given place.
+	 * 
 	 * @param place
 	 * @return true if place is part of this marking
 	 */
 	public boolean contains(Place place) {
-		assert place != null;
+		Validate.notNull(place);
 
 		return this.places.contains(place);
 	}
 
 	/**
-	 * Fire a transition of a petri net. Modifies this marking to the resulting
+	 * Fire a transition of a petri net. Return the resulting marking as a new
 	 * marking.
 	 * 
 	 * @param transition that fires
 	 */
-	protected void fireTransition(Transition transition) {
+	protected Marking fireTransition(Transition transition) {
 
-		assert transition.canFire(this) : "transition can not fire";
+		Validate.notNull(transition, "transition is null");
+		Validate.isTrue(transition.canFire(this), "transition can not fire");
 
-		List<Place> incoming = transition.getIncomingPlaces();
-		for (Place place : incoming)
-			this.places.remove(place);
+		List<Place> placeList = new ArrayList<>(this.places);
+		for (Place place : transition.getIncomingPlaces())
+			placeList.remove(place);
 
-		List<Place> outgoing = transition.getOutgoingPlaces();
-		for (Place place : outgoing)
-			this.places.add(place);
+		for (Place place : transition.getOutgoingPlaces())
+			placeList.add(place);
+
+		return new Marking(placeList);
 
 	}
 

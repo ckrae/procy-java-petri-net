@@ -4,31 +4,49 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.commons.lang3.Validate;
+
 /**
- * This class represents a Petri net.
+ * This class represents a petri net.
  *
  */
 public class PetriNet {
 
-	private List<Transition> transitions;
-	private List<Place> places;
+	/**
+	 * The transitions of this petri net.
+	 */
+	private final List<Transition> transitions;
 
+	/**
+	 * The places of this petri net.
+	 */
+	private final List<Place> places;
+
+	/**
+	 * Create a empty petri net.
+	 */
 	public PetriNet() {
-		this.transitions = new ArrayList<Transition>();
-		this.places = new ArrayList<Place>();
+		this.transitions = new ArrayList<>();
+		this.places = new ArrayList<>();
 	}
 
 	/**
-	 * Add a transition to this petri net
+	 * Add a transition to this petri net.
 	 * 
 	 * @return the new transition
 	 */
 	public Transition transition() {
 		int size = this.transitions.size();
-		String name = "t" + String.valueOf(size);
+		String name = "t" + size;
 		return transition(name);
 	}
 
+	/**
+	 * Add a transition to this petri net.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public Transition transition(String name) {
 		Transition transition = new Transition(name);
 		this.transitions.add(transition);
@@ -36,7 +54,7 @@ public class PetriNet {
 	}
 
 	/**
-	 * Add a place to this petri net
+	 * Add a place to this petri net.
 	 * 
 	 * @return the new place
 	 */
@@ -46,6 +64,12 @@ public class PetriNet {
 		return place(name);
 	}
 
+	/**
+	 * Add a place to this petri net.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public Place place(String name) {
 		Place place = new Place(name);
 		this.places.add(place);
@@ -59,22 +83,30 @@ public class PetriNet {
 	 * @param transition
 	 */
 	public void arc(Place place, Transition transition) {
-		assert this.places.contains(place) : "place not part of petri net";
-		assert this.transitions.contains(transition) : "transition not part of petri net";
+
+		Validate.notNull(place);
+		Validate.notNull(transition);
+
+		Validate.isTrue(this.places.contains(place), "place not part of petri net");
+		Validate.isTrue(this.transitions.contains(transition), "transition not part of petri net");
 
 		transition.addIncoming(place);
 
 	}
 
 	/**
-	 * Add a arc to this petri net that connects a transition and a place
+	 * Add a arc to this petri net that connects a transition and a place.
 	 * 
 	 * @param place
 	 * @param transition
 	 */
 	public void arc(Transition transition, Place place) {
-		assert this.places.contains(place) : "place not part of petri net";
-		assert this.transitions.contains(transition) : "transition not part of petri net";
+
+		Validate.notNull(place);
+		Validate.notNull(transition);
+
+		Validate.isTrue(this.places.contains(place), "place not part of petri net");
+		Validate.isTrue(this.transitions.contains(transition), "transition not part of petri net");
 
 		transition.addOutgoing(place);
 
@@ -82,57 +114,62 @@ public class PetriNet {
 
 	/**
 	 * Get all transitions of this petri net that are able to fire with respect to
-	 * the given marking
+	 * the given marking.
 	 * 
 	 * @param marking
-	 * @return
+	 * @return list of transitions
 	 */
 	public List<Transition> getEnabledTransitions(Marking marking) {
-		assert marking != null : "marking is null";
+
+		Validate.notNull(marking);
 
 		List<Transition> res = new ArrayList<>();
 		for (Transition transition : this.transitions) {
 			if (transition.canFire(marking))
 				res.add(transition);
 		}
+
 		return res;
 
 	}
 
 	/**
 	 * Returns true if petri net has enabled transitions with respect to the given
-	 * marking
+	 * marking.
 	 * 
 	 * @param marking
 	 * @return true if petri net can fire
 	 */
 	public boolean canFire(Marking marking) {
-		assert marking != null : "marking is null";
 
-		if (this.getEnabledTransitions(marking).isEmpty())
-			return false;
+		Validate.notNull(marking);
 
-		return true;
+		return !this.getEnabledTransitions(marking).isEmpty();
 
 	}
 
 	/**
-	 * Perform a step of the petri net execution
+	 * Perform a step of the petri net execution.
 	 * 
 	 * @param marking
 	 * @return the resulting marking
 	 */
 	public Marking fire(Marking marking) {
-		assert marking != null : "marking is null";
 
-		List<Transition> transitions = this.getEnabledTransitions(marking);
+		Validate.notNull(marking);
 
-		if (transitions.isEmpty())
+		List<Transition> enabledTransitions = this.getEnabledTransitions(marking);
+
+		if (enabledTransitions.isEmpty())
 			return marking;
 
+		if (enabledTransitions.size() == 1)
+			return marking.fireTransition(enabledTransitions.get(0));
+
+		// fire random enabled transition
 		Random random = new Random();
-		Integer i = random.nextInt(transitions.size());
-		Transition transition = transitions.get(i);
+		Integer i = random.nextInt(enabledTransitions.size());
+		Transition transition = enabledTransitions.get(i);
 
 		marking.fireTransition(transition);
 
@@ -159,7 +196,7 @@ public class PetriNet {
 	 * @return the final marking
 	 */
 	public Marking execute(Marking marking, int maxSteps) {
-		assert marking != null : "marking is null";
+		Validate.notNull(marking);
 
 		int step = 0;
 		while (this.canFire(marking) && step < maxSteps) {

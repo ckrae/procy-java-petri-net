@@ -1,4 +1,4 @@
-package ckrae.procy;
+package de.ckrae.procy;
 
 /**
  * Element of a {@link PetriNet}

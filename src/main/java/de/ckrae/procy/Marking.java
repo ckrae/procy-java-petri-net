@@ -1,4 +1,4 @@
-package ckrae.procy;
+package de.ckrae.procy;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -3,20 +3,40 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>ckrae</groupId>
+	<groupId>de.ckrae</groupId>
 	<artifactId>procy</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description> This is a simple library for process models</description>
+	<url>https://github.com/ckrae/procy-java-petri-net</url>
 
-	<name>procy</name>
-	<url>http://maven.apache.org</url>
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Christoph Krämer</name>
+			<email>cr.kraemer@outlook.com</email>
+			<organizationUrl>https://ckrae.de</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/ckrae/procy-java-petri-net.git</connection>		
+		<url>https://github.com/ckrae/procy-java-petri-net</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -28,7 +48,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.12.0</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>
